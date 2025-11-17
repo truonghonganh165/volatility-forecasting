@@ -185,13 +185,15 @@ These help detect **pre-shock information flow**, improving forecasts.
   - Conduct residual diagnostics (standardized residuals, histogram).
 - **Model equation:**
 
-$$
-\sigma_{t+1}^{2} = \omega + \alpha \varepsilon_t^2 + \beta \sigma_t^2
-$$
+    $$
+    \sigma_{t+1}^{2}
+    = \omega + \alpha \varepsilon_t^2 + \beta \sigma_t^2
+    $$
 
-where:
-- $ \varepsilon_t^2 $ = past shock  
-- $ \sigma_t^2 $ = past volatility   
+    where  
+    - $ \varepsilon_t^2 $ = past shock  
+    - $ \sigma_t^2 $ = past volatility  
+
 - Student-t innovations are used to model fat tails in VIX returns
 - **Outputs:**
   - GARCH forecast file: `data/processed/garch_forecasts.csv`
