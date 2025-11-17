@@ -152,6 +152,7 @@ These help detect **pre-shock information flow**, improving forecasts.
    jupyter lab
 
 3. Run notebooks in order:
+
    01_data_download_and_cleaning.ipynb  
    02_compute_RV.ipynb  
    03_HAR_baseline.ipynb  
@@ -159,7 +160,7 @@ These help detect **pre-shock information flow**, improving forecasts.
    05_feature_engineering.ipynb  
    06_LSTM_model.ipynb  
    07_LSTM_with_alt_data.ipynb  
-   08_Transformer_model.ipynb  
+   08_Transformer_model.ipynb 
    09_ablation_tests.ipynb  
 
 ---
