@@ -142,6 +142,33 @@ These help detect **pre-shock information flow**, improving forecasts.
 
 ---
 
+## Notebooks
+
+### 01 – Data Download & Cleaning (VIX)
+- **Notebook:** `notebooks/01_data_download_cleaning.ipynb`
+- **Goal:** Download and clean historical daily VIX data as the base dataset for volatility modeling.
+- **Data source:** Yahoo Finance (`^VIX`) via `yfinance`.
+- **Key steps:**
+  - Download daily OHLCV data starting from 2013-01-01.
+  - Standardize column names and ensure a proper `Date` index.
+  - Handle missing values and drop non-trading days if needed.
+- **Output:** Cleaned daily VIX dataset saved to `data/raw/VIX_daily.csv`.
+
+### 02 – Realized Volatility (RV) Estimation
+- **Notebook:** `notebooks/02_realized_volatility.ipynb`
+- **Goal:** Compute multiple realized volatility estimators from cleaned daily VIX data to form the target variable for classical and deep learning volatility models.
+- **Data source:** Cleaned daily VIX dataset from Notebook 01 (`data/raw/VIX_daily.csv`).
+- **Key steps:**
+  - Compute log returns, squared returns, and absolute returns.
+  - Generate rolling realized volatility using 5-day and 21-day windows.
+  - Implement range-based estimators (Parkinson volatility) for improved accuracy over returns-only measures.
+  - Visualize different RV estimators and compare their behavior over time.
+- **Outputs:**
+  - Realized volatility features saved to `data/processed/realized_vol.csv`.
+  - Time-series plots of RV (returns-based vs range-based).
+
+---
+
 ## How to Run
 
 1. Install dependencies:
