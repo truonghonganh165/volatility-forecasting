@@ -185,16 +185,12 @@ These help detect **pre-shock information flow**, improving forecasts.
   - Conduct residual diagnostics (standardized residuals, histogram).
 - **Model equation:**
 
-    $$
-    \sigma_{t+1}^{2}
-    = \omega + \alpha \varepsilon_t^2 + \beta \sigma_t^2
-    $$
+  $\sigma_{t+1}^{2} = \omega + \alpha \varepsilon_t^2 + \beta \sigma_t^2$
 
-    where  
-    - $ \varepsilon_t^2 $ = past shock  
-    - $ \sigma_t^2 $ = past volatility  
-
-- Student-t innovations are used to model fat tails in VIX returns
+  where  
+  - $\varepsilon_t^2$ = past shock  
+  - $ \sigma_t^2 $ = past volatility  
+  - Student-t innovations are used to model fat tails in VIX returns
 - **Outputs:**
   - GARCH forecast file: `data/processed/garch_forecasts.csv`
   - Forecast comparison plots and diagnostics saved under `results/figs/`
@@ -226,14 +222,7 @@ These help detect **pre-shock information flow**, improving forecasts.
   - Compute MSE and MAE for evaluation.
 - **Model equation:**
 
-$$
-\log(RV_{t+1}) =
-\beta_0
-+ \beta_d \log(RV_{t})
-+ \beta_w \log\left( \frac{1}{5}\sum_{i=1}^{5} RV_{t-i} \right)
-+ \beta_m \log\left( \frac{1}{22}\sum_{i=1}^{22} RV_{t-i} \right)
-+ \epsilon_{t+1}
-$$
+$\log(RV_{t+1}) = \beta_0 + \beta_d \log(RV_{t}) + \beta_w \log\left( \frac{1}{5}\sum_{i=1}^{5} RV_{t-i} \right) + \beta_m \log\left( \frac{1}{22}\sum_{i=1}^{22} RV_{t-i} \right) + \epsilon_{t+1}$
 
 - **Outputs:**
   - HAR forecast file: `data/processed/har_forecasts.csv`
