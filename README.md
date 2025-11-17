@@ -48,12 +48,12 @@ volatility-forecasting/
 ├── notebooks/
 │ ├── 01_data_download_and_cleaning.ipynb
 │ ├── 02_compute_RV.ipynb
-│ ├── 03_HAR_baseline.ipynb
-│ ├── 04_GARCH_baseline.ipynb
+│ ├── 03_garch_modeling.ipynb
+│ ├── 04_har_baseline.ipynb 
 │ ├── 05_feature_engineering.ipynb
-│ ├── 06_LSTM_model.ipynb
-│ ├── 07_LSTM_with_alt_data.ipynb
-│ ├── 08_Transformer_model.ipynb
+│ ├── 06_lstm_model.ipynb
+│ ├── 07_lstm_with_alt_data.ipynb
+│ ├── 08_transformer_model.ipynb
 │ └── 09_ablation_tests.ipynb
 │
 ├── src/
@@ -167,6 +167,36 @@ These help detect **pre-shock information flow**, improving forecasts.
   - Realized volatility features saved to `data/processed/realized_vol.csv`.
   - Time-series plots of RV (returns-based vs range-based).
 
+### 03 – GARCH(1,1) Volatility Modeling**
+- **Notebook:** `notebooks/03_garch_modeling.ipynb`
+- **Goal:** Build a classical GARCH benchmark model and compare its conditional volatility to realized volatility.
+- **Key steps:**
+  - Fit a GARCH(1,1) model on VIX log returns (Student-t innovations).
+  - Generate in-sample conditional volatility.
+  - Rolling out-of-sample forecasts.
+  - Compare GARCH forecasts to RV_21 via MSE and MAE.
+  - Residual diagnostics (standardized residuals, histograms).
+- **Outputs:**  
+  `data/processed/garch_forecasts.csv`  
+  Forecast comparison plots
+
+### 04 – HAR-RV Baseline**
+Heterogeneous AutoRegressive model — industry standard benchmark.
+
+### 05 – Feature Engineering**
+Lag features, rolling windows, macro variables, VIX regimes.
+
+### 06 – LSTM Baseline**
+Deep learning volatility forecasting.
+
+### 07 – LSTM w/ Alt Data**
+Sentiment, volume, optional macro signals.
+
+### 08 – Transformer Model**
+Modern sequence modeling architecture.
+
+### 09 – Ablation Studies**
+Feature importance, model component analysis.
 ---
 
 ## How to Run
