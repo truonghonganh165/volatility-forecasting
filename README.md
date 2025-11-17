@@ -90,9 +90,7 @@ Represents long-memory behavior in volatility.
 
 ### GARCH(1,1)
 Models volatility as a function of past shocks and past volatility:
-\[
-h_{t+1} = \omega + \alpha \varepsilon_t^2 + \beta h_t
-\]
+\[h_{t+1} = \omega + \alpha \varepsilon_t^2 + \beta h_t\]
 
 ### LSTM
 Uses a sequence of features (returns, RV, GARCH outputs, alt-data) to 
@@ -169,22 +167,115 @@ These help detect **pre-shock information flow**, improving forecasts.
 
 ### 03 – GARCH(1,1) Volatility Modeling
 - **Notebook:** `notebooks/03_garch_modeling.ipynb`
-- **Goal:** Build a classical GARCH benchmark model and compare its conditional volatility to realized volatility.
+- **Goal:** Build a classical GARCH(1,1) model to capture volatility clustering in the VIX and compare it against realized volatility benchmarks.
+- **Why GARCH?**  
+  Volatility in financial markets is persistent - high-vol days tend to be followed by high-vol days.  
+  GARCH(1,1) models this using past volatility and past squared shocks:
+  - captures clustering  
+  - captures mean-reversion  
+  - widely used in risk models and volatility forecasting  
 - **Key steps:**
-  - Fit a GARCH(1,1) model on VIX log returns (Student-t innovations).
-  - Generate in-sample conditional volatility.
-  - Rolling out-of-sample forecasts.
-  - Compare GARCH forecasts to RV_21 via MSE and MAE.
-  - Residual diagnostics (standardized residuals, histograms).
-- **Outputs:**  
-  `data/processed/garch_forecasts.csv`  
-  Forecast comparison plots
+  - Compute VIX log-returns.
+  - Fit a **GARCH(1,1)** model with Student-t distribution.
+  - Extract in-sample conditional volatility.
+  - Perform **rolling 1-step-ahead forecasts** on the test set (walk-forward approach).
+  - Compare GARCH volatility forecasts with 21-day realized volatility (RV_21).
+  - Evaluate performance using MSE and MAE.
+  - Conduct residual diagnostics (standardized residuals, histogram).
+- **Model equation:**
+\[
+\sigma_{t+1}^{2} = \omega + \alpha \varepsilon_t^2 + \beta \sigma_t^2
+\]
+where  
+- \( \varepsilon_t^2 \) = past shock  
+- \( \sigma_t^2 \) = past volatility  
+- Student-t innovations are used to model fat tails in VIX returns
+- **Outputs:**
+  - GARCH forecast file: `data/processed/garch_forecasts.csv`
+  - Forecast comparison plots and diagnostics saved under `results/figs/`
+- **Why it matters:**  
+  GARCH is the industry standard for volatility modeling in:
+  - derivatives pricing  
+  - portfolio risk modeling  
+  - volatility forecasting research  
+  It serves as a strong **baseline** before moving into HAR, LSTM, and Transformer models.
 
-### 04 – HAR-RV Baseline
-Heterogeneous AutoRegressive model — industry standard benchmark.
+### 04 – HAR-RV (Heterogeneous Autoregressive) Baseline
+- **Notebook:** `notebooks/04_har_baseline.ipynb`
+- **Goal:** Build a strong classical benchmark model for volatility forecasting using multiple time horizons of realized volatility.
+- **Why HAR?**  
+  HAR-RV is widely used in both academia and industry because financial volatility exhibits *long memory*.  
+  Instead of modeling only yesterday’s volatility (like GARCH), HAR uses:
+  - **Daily RV (1-day)**
+  - **Weekly RV (5-day average)**
+  - **Monthly RV (22-day average)**  
+  capturing short-, medium-, and long-term components of volatility.
+- **Key steps:**
+  - Construct RV lag features:
+    - `RV_d = RV(t-1)`
+    - `RV_w = mean(RV(t-1 … t-5))`
+    - `RV_m = mean(RV(t-1 … t-22))`
+  - Fit the HAR model using OLS on **log(RV)**.
+  - Generate in-sample fit and out-of-sample 1-step-ahead forecasts.
+  - Compare predicted vs actual RV.
+  - Compute MSE and MAE for evaluation.
+- **Model equation:**
+\[
+\log(RV_t) = \beta_0 + \beta_d \log(RV_{t-1}) + 
+             \beta_w \log\left( \frac{1}{5} \sum_{i=1}^{5} RV_{t-i} \right) +
+             \beta_m \log\left( \frac{1}{22} \sum_{i=1}^{22} RV_{t-i} \right) +
+             \epsilon_t
+\]
+- **Outputs:**
+  - HAR forecast file: `data/processed/har_forecasts.csv`
+  - Plots: HAR prediction vs actual RV (saved under `results/figs`)
+- **Why it matters:**  
+  HAR-RV is a **high-quality baseline** used in high-frequency volatility research.  
+  Deep learning models (LSTM, Transformers) should beat HAR to be considered meaningful improvements.
 
 ### 05 – Feature Engineering
-Lag features, rolling windows, macro variables, VIX regimes.
+- **Notebook:** `notebooks/05_feature_engineering.ipynb`
+- **Why Feature Engineering?**  
+  Deep learning models require richer input signals than classical models.  
+  Rather than predicting volatility from a single RV series, we create a diverse set of features capturing:
+  - return patterns  
+  - volatility persistence  
+  - high–low range information  
+  - market regimes  
+  - macro-like behaviors encoded inside VIX  
+  - predictions from GARCH/HAR (meta-features)
+- **Goal:** Build a full feature matrix for machine learning models (LSTM, Transformer, classical ML baselines).
+- **Key steps:**
+  - Merge clean OHLCV + realized volatility data.
+  - Construct log-returns and lagged return features.
+  - Add lagged realized-volatility features (1, 2, 5, 10, 21 days).
+  - Rolling statistics on returns and RV:
+    - mean, std, min, max over 5, 10, 21, 42 days
+  - Range-based volatility estimators:
+    - Parkinson  
+    - Garman–Klass  
+  - Regime indicators:
+    - high-volatility regime flag (top 20%)  
+    - volatility spike indicator  
+    - return spike indicator  
+  - VIX-specific macro proxies:
+    - VIX level  
+    - VIX % change  
+    - volatility-of-volatility  
+  - Add **GARCH** and **HAR** predictions as explanatory features (if available).
+- **Outputs:**
+  - Final ML-ready feature matrix:
+    ```
+    data/processed/features.csv
+    ```
+  - Contains all features for LSTM, Transformer, and ablation-study notebooks.
+- **Why it matters:**  
+  Strong feature engineering allows deep learning models to capture:
+  - long-memory volatility structure  
+  - nonlinear price dynamics  
+  - volatility regimes  
+  - early warning signals encoded in VIX movements  
+  These features dramatically improve model performance over raw RV alone.
 
 ### 06 – LSTM Baseline
 Deep learning volatility forecasting.
@@ -197,6 +288,7 @@ Modern sequence modeling architecture.
 
 ### 09 – Ablation Studies
 Feature importance, model component analysis.
+
 ---
 
 ## How to Run
@@ -206,6 +298,7 @@ Feature importance, model component analysis.
    pip install -r requirements.txt
 ```
 2. Launch Jupyter Lab:
+
    jupyter lab
 
 3. Run notebooks in order:
