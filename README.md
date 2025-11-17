@@ -90,7 +90,10 @@ Represents long-memory behavior in volatility.
 
 ### GARCH(1,1)
 Models volatility as a function of past shocks and past volatility:
-\[h_{t+1} = \omega + \alpha \varepsilon_t^2 + \beta h_t\]
+
+\[
+h_{t+1} = \omega + \alpha \varepsilon_t^2 + \beta h_t
+\]
 
 ### LSTM
 Uses a sequence of features (returns, RV, GARCH outputs, alt-data) to 
@@ -183,9 +186,11 @@ These help detect **pre-shock information flow**, improving forecasts.
   - Evaluate performance using MSE and MAE.
   - Conduct residual diagnostics (standardized residuals, histogram).
 - **Model equation:**
+
 \[
 \sigma_{t+1}^{2} = \omega + \alpha \varepsilon_t^2 + \beta \sigma_t^2
 \]
+
 where  
 - \( \varepsilon_t^2 \) = past shock  
 - \( \sigma_t^2 \) = past volatility  
@@ -220,12 +225,16 @@ where
   - Compare predicted vs actual RV.
   - Compute MSE and MAE for evaluation.
 - **Model equation:**
+
 \[
-\log(RV_t) = \beta_0 + \beta_d \log(RV_{t-1}) + 
-             \beta_w \log\left( \frac{1}{5} \sum_{i=1}^{5} RV_{t-i} \right) +
-             \beta_m \log\left( \frac{1}{22} \sum_{i=1}^{22} RV_{t-i} \right) +
-             \epsilon_t
+\log(RV_t)
+= \beta_0 
++ \beta_d \log(RV_{t-1})
++ \beta_w \log\left(\frac{1}{5}\sum_{i=1}^{5}RV_{t-i}\right)
++ \beta_m \log\left(\frac{1}{22}\sum_{i=1}^{22}RV_{t-i}\right)
++ \epsilon_t
 \]
+
 - **Outputs:**
   - HAR forecast file: `data/processed/har_forecasts.csv`
   - Plots: HAR prediction vs actual RV (saved under `results/figs`)
