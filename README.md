@@ -212,12 +212,12 @@ Feature importance, model component analysis.
 
    01_data_download_and_cleaning.ipynb  
    02_compute_RV.ipynb  
-   03_HAR_baseline.ipynb  
-   04_GARCH_baseline.ipynb  
-   05_feature_engineering.ipynb  
-   06_LSTM_model.ipynb  
-   07_LSTM_with_alt_data.ipynb  
-   08_Transformer_model.ipynb 
+   03_garch_modeling.ipynb
+   04_har_baseline.ipynb
+   05_feature_engineering.ipynb
+   06_lstm_model.ipynb
+   07_lstm_with_alt_data.ipynb
+   08_transformer_model.ipynb
    09_ablation_tests.ipynb  
 
 ---
