@@ -276,11 +276,61 @@ These help detect **pre-shock information flow**, improving forecasts.
   These features dramatically improve model performance over raw RV alone.
 
 ### 06 – LSTM Baseline
-Deep learning volatility forecasting.
+- **Notebook:** `notebooks/06_lstm_model.ipynb`
+- **Why an LSTM baseline?**  
+  Volatility is a time-dependent process with memory, clustering, and nonlinear behavior.  
+  An LSTM provides a strong first deep-learning benchmark because it can learn patterns from sequences of past volatility values.  
+  This establishes the “pure RV-only” deep learning baseline before adding alternative data or more complex architectures.
+- **Goal:** Build the first neural-network volatility forecaster using only past realized volatility information.
+- **Key steps:**
+  - Load ML-ready sequences from Notebook 05.
+  - Construct supervised windows (e.g., 30-day sequences).
+  - Split into train/validation/test sets while preserving time order.
+  - Build a simple LSTM model using `tf.keras`.
+  - Train using MSE loss and the Adam optimizer.
+  - Predict 1-day-ahead realized volatility.
+  - Evaluate accuracy using MSE and MAE.
+- **Model architecture:**
+  - Input → LSTM(32) → Dense(1)
+- **Outputs:**
+  - Training curve showing fast convergence and stable validation loss.
+  - Prediction plot comparing LSTM forecasts vs actual RV.
+  - Example performance:
+    ```
+    MSE: 0.0137
+    MAE: 0.1011
+    ```
+- **Why it matters:**  
+  - This notebook provides the baseline performance of deep learning using *only* past volatility information.  
+  - It serves as a reference point for evaluating improvements in Notebook 07 (with alternative data) and Notebook 08 (Transformer model).
 
 ### 07 – LSTM w/ Alt Data
-Sentiment, volume, optional macro signals.
-
+- **Notebook:** `notebooks/07_lstm_with_alt_data.ipynb`
+- **Why alternative data?**  
+  Past volatility alone cannot fully explain market behavior.  
+  Adding more features—such as lagged returns, rolling statistics, range-based measures, volatility regimes, or macro-style VIX signals—gives the LSTM richer information to improve forecasts.  
+  This notebook extends the baseline model with these engineered features.
+- **Goal:** Build an enhanced LSTM model that incorporates multiple predictive signals beyond raw realized volatility.
+- **Key steps:**
+  - Load the feature matrix from Notebook 05 (`features.csv`).
+  - Select available alternative-data features (technical, statistical, regime-based).
+  - Standardize all features using `StandardScaler`.
+  - Create multi-feature supervised sequences.
+  - Build a deeper LSTM model with dropout for better generalization.
+  - Train the model and monitor training/validation loss.
+  - Compare predictions to actual realized volatility.
+  - Evaluate improvements relative to Notebook 06.
+- **Model architecture:**
+  - Input → LSTM(64, return_sequences=True) → Dropout(0.2) → LSTM(32) → Dense(16) → Dense(1)
+- **Outputs:**
+  - Training curve demonstrating smoother and generally lower validation loss than the baseline.
+  - Forecast plot where the enhanced LSTM tracks RV more closely and responds faster to changes.
+  - Typical improvement in MSE/MAE over Notebook 06.
+  - Saved predictions for later analysis.
+- **Why it matters:**  
+  - This notebook shows the impact of alternative data on volatility forecasting.  
+  - The model becomes better at capturing volatility regimes and medium-term structure, demonstrating the value of richer inputs before moving on to the Transformer architecture in Notebook 08.
+  
 ### 08 – Transformer Model
 Modern sequence modeling architecture.
 
